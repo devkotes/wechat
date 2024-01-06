@@ -1,7 +1,10 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:wechat/models/chat_user.dart';
@@ -17,11 +20,70 @@ class FirebaseService {
   // untuk akses firebase store
   static FirebaseStorage storage = FirebaseStorage.instance;
 
+  // untuk akses firebase messaging [PUSH NOTIFICATION]
+  // https://fcm.googleapis.com/fcm/send
+
+  static FirebaseMessaging fMessaging = FirebaseMessaging.instance;
+
   // variable user login
   static late ChatUser me;
 
   // current user
   static User get user => auth.currentUser!;
+
+  // token firebase messaging
+  static Future<void> getFirebaseMessagingToken() async {
+    await fMessaging.requestPermission();
+
+    await fMessaging.getToken().then((token) {
+      if (token != null) {
+        me.pushToken = token;
+        debugPrint('ME PUSH TOKEN : $token');
+      }
+    });
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      debugPrint('Message Data ${message.data}');
+      if (message.notification != null) {
+        debugPrint(
+            'Message also contained a notification ${message.notification}');
+      }
+    });
+  }
+
+  // Send notification
+  static Future<void> sendNotification(ChatUser chatUser, String msg) async {
+    try {
+      final body = {
+        "to": chatUser.pushToken,
+        "notification": {
+          "title": chatUser.name,
+          "body": msg,
+          "android_channel_id": "your_channel_id",
+          "sound": "default",
+        },
+        "data": {
+          "click_action": "FLUTTER_NOTIFICATION_CLICK",
+          "some_data": "User ID : ${me.id}"
+        },
+      };
+
+      var res = await http.post(
+        Uri.parse('https://fcm.googleapis.com/fcm/send'),
+        headers: {
+          HttpHeaders.contentTypeHeader: 'application/json',
+          HttpHeaders.authorizationHeader:
+              'key=AAAA5PUBDs0:APA91bHhPwESUkz9JvTgJfuxZdApkytfZ1E5mpOxjYtIsUNAmrgBqVy5_1M6vr7eCsF02_EZq6zkC4GtvHUnaXQL3PYhDMpJVLShyDpnHzqsD6WqdM4jiGzsQHkFfz2LE4iUdhzpvKEF',
+        },
+        body: json.encode(body),
+      );
+
+      debugPrint('Status Code ${res.statusCode}');
+      debugPrint('Body ${res.body}');
+    } catch (e) {
+      debugPrint('Send Notification $e');
+    }
+  }
 
   // cek apakah user tersedia atau belum
   static Future<bool> userExist() async {
@@ -32,6 +94,10 @@ class FirebaseService {
     await firestore.collection('users').doc(user.uid).get().then((user) async {
       if (user.exists) {
         me = ChatUser.fromJson(user.data()!);
+        await getFirebaseMessagingToken();
+
+        // Setting user status to active
+        updateActiveStatus(true);
       } else {
         await createUser().then((value) => getSelfInfo());
       }
@@ -73,6 +139,7 @@ class FirebaseService {
     await firestore.collection('users').doc(user.uid).update({
       "name": me.name,
       "about": me.about,
+      "push_token": me.pushToken,
     });
   }
 
@@ -127,25 +194,33 @@ class FirebaseService {
   // Mengirim Pesan
   static Future<void> sendMessage(
       ChatUser chatUser, String msg, MessageType type) async {
-    final time = DateTime.now().millisecondsSinceEpoch.toString();
+    try {
+      final time = DateTime.now().millisecondsSinceEpoch.toString();
 
-    final Message message = Message(
-      toId: chatUser.id,
-      type: type,
-      msg: msg,
-      read: '',
-      fromId: user.uid,
-      sent: time,
-    );
+      final Message message = Message(
+        toId: chatUser.id,
+        type: type,
+        msg: msg,
+        read: '',
+        fromId: user.uid,
+        sent: time,
+      );
 
-    final ref = firestore
-        .collection('rooms/${getConversationId(chatUser.id)}/messages/');
-    await ref.doc(time).set(message.toJson());
+      final ref = firestore
+          .collection('rooms/${getConversationId(chatUser.id)}/messages/');
+      await ref.doc(time).set(message.toJson()).then((value) {
+        debugPrint('SEND notification');
+        sendNotification(chatUser, type == MessageType.text ? msg : 'image');
+      });
+    } catch (e) {
+      debugPrint('Send Message $e');
+    }
   }
 
   // UPDATE Read Status
   static Future<void> updateMessageReadStatus(Message message) async {
     final time = DateTime.now().millisecondsSinceEpoch.toString();
+    debugPrint('rooms/${getConversationId(message.toId)}/messages/');
     firestore
         .collection('rooms/${getConversationId(message.toId)}/messages/')
         .doc(message.sent)
@@ -176,5 +251,25 @@ class FirebaseService {
 
     // Kirim pesan gambar
     await sendMessage(chatUser, imageUrl, MessageType.image);
+  }
+
+  // Delete Message
+  static Future<void> deleteMessage(Message message) async {
+    await firestore
+        .collection('chats/${getConversationId(message.toId)}/messages/')
+        .doc(message.sent)
+        .delete();
+
+    if (message.type == MessageType.image) {
+      await storage.refFromURL(message.msg).delete();
+    }
+  }
+
+  //update message
+  static Future<void> updateMessage(Message message, String updatedMsg) async {
+    await firestore
+        .collection('chats/${getConversationId(message.toId)}/messages/')
+        .doc(message.sent)
+        .update({'msg': updatedMsg});
   }
 }

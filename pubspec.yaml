@@ -19,7 +19,10 @@ dependencies:
   firebase_storage: ^11.5.6
   flutter:
     sdk: flutter
+  flutter_notification_channel: ^2.0.0
+  # gallery_saver: ^2.3.2
   google_sign_in: ^6.2.1
+  http: ^1.1.2
   image_picker: ^1.0.5
 
 dev_dependencies:

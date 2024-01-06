@@ -28,9 +28,6 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     FirebaseService.getSelfInfo();
 
-    // Setting user status to active
-    FirebaseService.updateActiveStatus(true);
-
     // Update user active status according to lifecycle event
     // resume --> Active or Online
     // pause --> inactive or Offline
