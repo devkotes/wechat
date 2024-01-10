@@ -47,30 +47,30 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDTQgxnFLnjjSGMG1Sw8fmvx8mBJlm87T4',
-    appId: '1:983363030733:web:a8e1656aed50d56213a384',
-    messagingSenderId: '983363030733',
-    projectId: 'wechat-1e036',
-    authDomain: 'wechat-1e036.firebaseapp.com',
-    storageBucket: 'wechat-1e036.appspot.com',
+    apiKey: 'AIzaSyCotwraNETChrvxKf6yzYNc8NZLWGgaJ1k',
+    appId: '1:641007221923:web:8b3378fe33579cfc3b5316',
+    messagingSenderId: '641007221923',
+    projectId: 'wechat-kedi',
+    authDomain: 'wechat-kedi.firebaseapp.com',
+    storageBucket: 'wechat-kedi.appspot.com',
+    measurementId: 'G-HHD6QPDX1X',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyB4_QTmTHZz6sLWtqruf1IlsXV2mypQAow',
-    appId: '1:983363030733:android:0ce322ef35edb3c013a384',
-    messagingSenderId: '983363030733',
-    projectId: 'wechat-1e036',
-    storageBucket: 'wechat-1e036.appspot.com',
+    apiKey: 'AIzaSyDpwbmpdTV8rHR0tDZp8jNW_-fWKkfRGiY',
+    appId: '1:641007221923:android:e462f83ec2c142ab3b5316',
+    messagingSenderId: '641007221923',
+    projectId: 'wechat-kedi',
+    storageBucket: 'wechat-kedi.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBHbavdHMDscPRsNvtGY-H7eEEZAfuNraw',
-    appId: '1:983363030733:ios:9a103f455389980a13a384',
-    messagingSenderId: '983363030733',
-    projectId: 'wechat-1e036',
-    storageBucket: 'wechat-1e036.appspot.com',
-    androidClientId: '983363030733-o3fuhopkgs3batjbqm2lgd1vspugu6kj.apps.googleusercontent.com',
-    iosClientId: '983363030733-q0njb8vm6p13tnv52u8epda8lmfnob8f.apps.googleusercontent.com',
+    apiKey: 'AIzaSyBG-C0gvsOscKS8egOscVrKRQWRDJE9QxA',
+    appId: '1:641007221923:ios:8aa09d4193bd2e7b3b5316',
+    messagingSenderId: '641007221923',
+    projectId: 'wechat-kedi',
+    storageBucket: 'wechat-kedi.appspot.com',
+    iosClientId: '641007221923-nlm7qnad2t70g3tm9jmp0jjiem4cpkf8.apps.googleusercontent.com',
     iosBundleId: 'com.devkotes.wechat',
   );
 }

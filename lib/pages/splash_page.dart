@@ -51,7 +51,7 @@ class _SplashPageState extends State<SplashPage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Welcome We Chat'),
+        title: const Text(''),
         centerTitle: true,
       ),
       body: Stack(
@@ -60,20 +60,8 @@ class _SplashPageState extends State<SplashPage> {
             top: mq.height * .15,
             right: mq.width * .25,
             width: mq.width * .5,
-            child: Image.asset('assets/images/logo.png'),
+            child: Image.asset('assets/images/kedi.png'),
           ),
-          Positioned(
-            bottom: mq.height * .15,
-            left: mq.width * .05,
-            width: mq.width * .9,
-            height: mq.height * .07,
-            child: const Text(
-              'MADE IN INDONESIA ❤️❤︎',
-              style: TextStyle(
-                  fontSize: 16, color: Colors.black38, letterSpacing: .5),
-              textAlign: TextAlign.center,
-            ),
-          )
         ],
       ),
     );

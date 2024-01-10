@@ -1,45 +1,37 @@
 {
   "project_info": {
-    "project_number": "983363030733",
-    "project_id": "wechat-1e036",
-    "storage_bucket": "wechat-1e036.appspot.com"
+    "project_number": "641007221923",
+    "project_id": "wechat-kedi",
+    "storage_bucket": "wechat-kedi.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:983363030733:android:0ce322ef35edb3c013a384",
+        "mobilesdk_app_id": "1:641007221923:android:e462f83ec2c142ab3b5316",
         "android_client_info": {
           "package_name": "com.devkotes.wechat"
         }
       },
       "oauth_client": [
         {
-          "client_id": "983363030733-o3fuhopkgs3batjbqm2lgd1vspugu6kj.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.devkotes.wechat",
-            "certificate_hash": "7db289f0a17794a73a233c9d31a6e33cc7bf10e2"
-          }
-        },
-        {
-          "client_id": "983363030733-0m8rcsgct0ujlfjo8jp1crf6fb9dfkt3.apps.googleusercontent.com",
+          "client_id": "641007221923-cek0rvrq2fj6rd1d0fg76g4lf6r0kv4i.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyB4_QTmTHZz6sLWtqruf1IlsXV2mypQAow"
+          "current_key": "AIzaSyDpwbmpdTV8rHR0tDZp8jNW_-fWKkfRGiY"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "983363030733-0m8rcsgct0ujlfjo8jp1crf6fb9dfkt3.apps.googleusercontent.com",
+              "client_id": "641007221923-cek0rvrq2fj6rd1d0fg76g4lf6r0kv4i.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "983363030733-q0njb8vm6p13tnv52u8epda8lmfnob8f.apps.googleusercontent.com",
+              "client_id": "641007221923-nlm7qnad2t70g3tm9jmp0jjiem4cpkf8.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
                 "bundle_id": "com.devkotes.wechat"

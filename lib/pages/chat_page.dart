@@ -1,5 +1,3 @@
-// import 'dart:convert';
-
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -87,7 +85,10 @@ class _ChatPageState extends State<ChatPage> {
                             padding: EdgeInsets.only(top: mq.height * .01),
                             physics: const BouncingScrollPhysics(),
                             itemBuilder: (context, index) {
-                              return MessageCard(message: listMessage[index]);
+                              return MessageCard(
+                                message: listMessage[index],
+                                user: widget.user,
+                              );
                             },
                           );
                         } else {

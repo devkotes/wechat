@@ -133,23 +133,23 @@ class _ProfilePageState extends State<ProfilePage> {
                   SizedBox(
                     height: mq.height * .02,
                   ),
-                  TextFormField(
-                    initialValue: widget.user.about,
-                    onSaved: (newValue) =>
-                        FirebaseService.me.about = newValue ?? '',
-                    validator: (value) => (value != null && value.isNotEmpty)
-                        ? null
-                        : 'Required Field',
-                    decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.info_outline_rounded,
-                          color: Colors.deepPurple),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      hintText: 'eg. Feeling happy',
-                      label: const Text('About'),
-                    ),
-                  ),
+                  // TextFormField(
+                  //   initialValue: widget.user.about,
+                  //   onSaved: (newValue) =>
+                  //       FirebaseService.me.about = newValue ?? '',
+                  //   validator: (value) => (value != null && value.isNotEmpty)
+                  //       ? null
+                  //       : 'Required Field',
+                  //   decoration: InputDecoration(
+                  //     prefixIcon: const Icon(Icons.info_outline_rounded,
+                  //         color: Colors.deepPurple),
+                  //     border: OutlineInputBorder(
+                  //       borderRadius: BorderRadius.circular(12),
+                  //     ),
+                  //     hintText: 'eg. Feeling happy',
+                  //     label: const Text('About'),
+                  //   ),
+                  // ),
                   SizedBox(
                     height: mq.height * .05,
                   ),

@@ -50,9 +50,7 @@ class MyApp extends StatelessWidget {
     mq = MediaQuery.of(context).size;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      // darkTheme: ThemeData.dark(),
-      title: 'WeChat',
-      // themeMode: ThemeMode.dark,
+      title: 'Wechat Kedi',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.deepPurple,

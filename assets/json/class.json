@@ -1,0 +1,15 @@
+{
+  "class" : [
+    {
+        "uid" : {
+            "uid" : "generate uid",
+            "id" : "ID CLass", 
+            "name" : "name class", 
+            "photoUrl" : "https://example@gmail.com",
+            "adminRoom" : ["uid1", "uid2"],
+            "activityRoom" : ["uid1", "uid2"],
+            "messages" : "List Of Message Object"
+        }
+    }
+  ]
+}

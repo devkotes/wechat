@@ -9,6 +9,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:wechat/models/chat_user.dart';
 import 'package:wechat/models/messages.dart';
+import 'package:mime/mime.dart';
 
 class FirebaseService {
   // untuk authentication firebase
@@ -31,15 +32,19 @@ class FirebaseService {
   // current user
   static User get user => auth.currentUser!;
 
+  // key Messaging API
+  static String get messageKey =>
+      'AAAA5PUBDs0:APA91bHhPwESUkz9JvTgJfuxZdApkytfZ1E5mpOxjYtIsUNAmrgBqVy5_1M6vr7eCsF02_EZq6zkC4GtvHUnaXQL3PYhDMpJVLShyDpnHzqsD6WqdM4jiGzsQHkFfz2LE4iUdhzpvKEF';
+
   // token firebase messaging
   static Future<void> getFirebaseMessagingToken() async {
     await fMessaging.requestPermission();
 
     await fMessaging.getToken().then((token) {
-      if (token != null) {
-        me.pushToken = token;
-        debugPrint('ME PUSH TOKEN : $token');
-      }
+      // if (token != null) {
+      //   me.pushToken = token;
+      //   debugPrint('ME PUSH TOKEN : $token');
+      // }
     });
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
@@ -52,13 +57,14 @@ class FirebaseService {
   }
 
   // Send notification
-  static Future<void> sendNotification(ChatUser chatUser, String msg) async {
+  static Future<void> sendNotification(
+      ChatUser chatUser, String content) async {
     try {
       final body = {
-        "to": chatUser.pushToken,
+        // "to": chatUser.pushToken,
         "notification": {
           "title": chatUser.name,
-          "body": msg,
+          "body": content,
           "android_channel_id": "your_channel_id",
           "sound": "default",
         },
@@ -72,8 +78,7 @@ class FirebaseService {
         Uri.parse('https://fcm.googleapis.com/fcm/send'),
         headers: {
           HttpHeaders.contentTypeHeader: 'application/json',
-          HttpHeaders.authorizationHeader:
-              'key=AAAA5PUBDs0:APA91bHhPwESUkz9JvTgJfuxZdApkytfZ1E5mpOxjYtIsUNAmrgBqVy5_1M6vr7eCsF02_EZq6zkC4GtvHUnaXQL3PYhDMpJVLShyDpnHzqsD6WqdM4jiGzsQHkFfz2LE4iUdhzpvKEF',
+          HttpHeaders.authorizationHeader: 'key=$messageKey',
         },
         body: json.encode(body),
       );
@@ -112,10 +117,8 @@ class FirebaseService {
       isOnline: false,
       id: user.uid,
       createdAt: time,
-      pushToken: '',
       email: user.email.toString(),
       photoUrl: user.photoURL.toString(),
-      about: 'Hey, Iam Use Wechat',
       lastActive: time,
       name: user.displayName.toString(),
     );
@@ -138,8 +141,6 @@ class FirebaseService {
   static Future<void> updateUserInfo() async {
     await firestore.collection('users').doc(user.uid).update({
       "name": me.name,
-      "about": me.about,
-      "push_token": me.pushToken,
     });
   }
 
@@ -187,30 +188,31 @@ class FirebaseService {
       ChatUser user) {
     return firestore
         .collection('rooms/${getConversationId(user.id)}/messages/')
-        .orderBy('sent', descending: true)
+        .orderBy('createdAt', descending: true)
         .snapshots();
   }
 
   // Mengirim Pesan
   static Future<void> sendMessage(
-      ChatUser chatUser, String msg, MessageType type) async {
+      ChatUser chatUser, String content, MessageType type) async {
     try {
       final time = DateTime.now().millisecondsSinceEpoch.toString();
 
       final Message message = Message(
-        toId: chatUser.id,
-        type: type,
-        msg: msg,
-        read: '',
-        fromId: user.uid,
-        sent: time,
+        uid: 'xxxx-xxxyyy-xxxxttt',
+        messageType: type,
+        content: content,
+        readAt: '',
+        senderId: user.uid,
+        createdAt: time,
+        groupAt: time,
       );
 
       final ref = firestore
           .collection('rooms/${getConversationId(chatUser.id)}/messages/');
       await ref.doc(time).set(message.toJson()).then((value) {
         debugPrint('SEND notification');
-        sendNotification(chatUser, type == MessageType.text ? msg : 'image');
+        // sendNotification(chatUser, type == MessageType.text ? content : 'image');
       });
     } catch (e) {
       debugPrint('Send Message $e');
@@ -218,13 +220,13 @@ class FirebaseService {
   }
 
   // UPDATE Read Status
-  static Future<void> updateMessageReadStatus(Message message) async {
+  static Future<void> updateMessageReadStatus(
+      ChatUser chatUser, Message message) async {
     final time = DateTime.now().millisecondsSinceEpoch.toString();
-    debugPrint('rooms/${getConversationId(message.toId)}/messages/');
     firestore
-        .collection('rooms/${getConversationId(message.toId)}/messages/')
-        .doc(message.sent)
-        .update({'read': time});
+        .collection('rooms/${getConversationId(chatUser.id)}/messages/')
+        .doc(message.createdAt)
+        .update({'readAt': time});
   }
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> getLastMessage(
@@ -232,7 +234,7 @@ class FirebaseService {
     return firestore
         .collection('rooms/${getConversationId(user.id)}/messages/')
         .limit(1)
-        .orderBy('sent', descending: true)
+        .orderBy('createdAt', descending: true)
         .snapshots();
   }
 
@@ -254,22 +256,42 @@ class FirebaseService {
   }
 
   // Delete Message
-  static Future<void> deleteMessage(Message message) async {
+  static Future<void> deleteMessage(ChatUser chatUser, Message message) async {
     await firestore
-        .collection('chats/${getConversationId(message.toId)}/messages/')
-        .doc(message.sent)
+        .collection('rooms/${getConversationId(chatUser.id)}/messages/')
+        .doc(message.createdAt)
         .delete();
 
-    if (message.type == MessageType.image) {
-      await storage.refFromURL(message.msg).delete();
+    if (message.messageType == MessageType.image) {
+      await storage.refFromURL(message.content).delete();
     }
   }
 
   //update message
-  static Future<void> updateMessage(Message message, String updatedMsg) async {
+  static Future<void> updateMessage(
+      ChatUser chatUser, Message message, String updatedcontent) async {
+    final time = DateTime.now().millisecondsSinceEpoch.toString();
     await firestore
-        .collection('chats/${getConversationId(message.toId)}/messages/')
-        .doc(message.sent)
-        .update({'msg': updatedMsg});
+        .collection('rooms/${getConversationId(chatUser.id)}/messages/')
+        .doc(message.createdAt)
+        .update({'content': updatedcontent, 'updateAt': time});
+  }
+
+  static Future<void> sendChatFile(ChatUser chatUser, File file) async {
+    final ext = file.path.split('.').last;
+    final mimeType = lookupMimeType(file.path);
+    debugPrint('EXT : $ext');
+    debugPrint('mimeType : $mimeType');
+    // final ref = storage.ref().child(
+    //     'files/${getConversationId(chatUser.id)}/${DateTime.now().millisecondsSinceEpoch}.$ext');
+    // await ref.putFile(file, SettableMetadata(contentType: mimeType)).then((p0) {
+    //   debugPrint('Data Transferred ${p0.bytesTransferred / 100} kb');
+    // });
+
+    // // GET IMAGE URL FROM STORAGE
+    // final getUrl = await ref.getDownloadURL();
+
+    // // Kirim pesan gambar
+    // await sendMessage(chatUser, getUrl, MessageType.image);
   }
 }

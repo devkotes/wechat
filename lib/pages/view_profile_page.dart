@@ -80,19 +80,19 @@ class _ViewProfilePageState extends State<ViewProfilePage> {
                   SizedBox(height: mq.height * .02),
 
                   //user about
-                  Row(
+                  const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
+                      Text(
                         'About: ',
                         style: TextStyle(
                             color: Colors.black87,
                             fontWeight: FontWeight.w500,
                             fontSize: 15),
                       ),
-                      Text(widget.user.about,
-                          style: const TextStyle(
-                              color: Colors.black54, fontSize: 15)),
+                      // Text(widget.user.about,
+                      //     style: const TextStyle(
+                      //         color: Colors.black54, fontSize: 15)),
                     ],
                   ),
                 ],

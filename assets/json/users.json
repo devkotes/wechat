@@ -1,0 +1,14 @@
+{
+  "users" : [
+    {
+        "uid" : {
+            "uid" : "generate uid / ID Users", 
+            "name" : "name user", 
+            "email" : "email@gmail.com", 
+            "photoUrl" : "https://example@gmail.com",
+            "is_online" : true,
+            "last_active" : "date milisecondsinceeffoch"
+        }
+    }
+  ]
+}

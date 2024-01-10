@@ -40,7 +40,7 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Welcome We Chat'),
+        title: const Text(''),
         centerTitle: true,
       ),
       body: Stack(
@@ -50,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
             right: (isAnimate) ? mq.width * .25 : -mq.width * .5,
             width: mq.width * .5,
             duration: const Duration(seconds: 1),
-            child: Image.asset('assets/images/logo.png'),
+            child: Image.asset('assets/images/kedi.png'),
           ),
           Positioned(
             bottom: mq.height * .15,

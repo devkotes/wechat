@@ -1,161 +1,39 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wechat/helper/my_date_utils.dart';
 import 'package:wechat/main.dart';
+import 'package:wechat/models/chat_user.dart';
 import 'package:wechat/models/messages.dart';
+import 'package:wechat/pages/widgets/message/custom_message.dart';
+import 'package:wechat/pages/widgets/message/file_message.dart';
+import 'package:wechat/pages/widgets/message/image_message.dart';
+import 'package:wechat/pages/widgets/message/system_message.dart';
+import 'package:wechat/pages/widgets/message/text_message.dart';
 import 'package:wechat/service/firebase_service.dart';
 
 import '../../helper/dialogs.dart';
 
 class MessageCard extends StatelessWidget {
+  final ChatUser user;
   final Message message;
-  const MessageCard({super.key, required this.message});
+  const MessageCard({super.key, required this.message, required this.user});
 
   @override
   Widget build(BuildContext context) {
-    bool isMe = FirebaseService.user.uid == message.fromId;
+    bool isMe = FirebaseService.user.uid == message.senderId;
     return InkWell(
       onLongPress: () {
         _showBottomSheet(context: context, isMe: isMe);
       },
-      child: (isMe) ? _purpleMessage(context) : _greenMessage(context),
-    );
-  }
-
-  Widget _purpleMessage(BuildContext ctx) {
-    // debugPrint('READ MSG :${message.read}');
-    if (message.read.isEmpty) {
-      FirebaseService.updateMessageReadStatus(message);
-    }
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Flexible(
-          child: Container(
-            padding: EdgeInsets.all(
-              (message.type == MessageType.image)
-                  ? mq.width * .03
-                  : mq.width * .04,
-            ),
-            margin: EdgeInsets.symmetric(
-              horizontal: mq.width * .04,
-              vertical: mq.height * .01,
-            ),
-            decoration: BoxDecoration(
-              color: Colors.deepPurple.shade300.withOpacity(0.7),
-              border: Border.all(color: Colors.deepPurple.shade400),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(30),
-                topRight: Radius.circular(30),
-                bottomRight: Radius.circular(30),
-              ),
-            ),
-            child: (message.type == MessageType.text)
-                ? Text(
-                    message.msg,
-                    style: const TextStyle(fontSize: 15, color: Colors.white),
-                  )
-                : ClipRRect(
-                    borderRadius: BorderRadius.circular(mq.height * .03),
-                    child: CachedNetworkImage(
-                      fit: BoxFit.cover,
-                      imageUrl: message.msg,
-                      placeholder: (context, url) => const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: CircularProgressIndicator(strokeWidth: 2)),
-                      errorWidget: (context, url, error) => const CircleAvatar(
-                        child: Icon(
-                          Icons.image,
-                          size: 20,
-                        ),
-                      ),
-                    ),
-                  ),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(right: mq.width * .04),
-          child: Text(
-            MyDateUtils.getFormattedTime(context: ctx, time: message.sent),
-            style: const TextStyle(
-              fontSize: 13,
-              color: Colors.black54,
-            ),
-          ),
-        )
-      ],
-    );
-  }
-
-  Widget _greenMessage(BuildContext ctx) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            SizedBox(width: mq.width * .04),
-            if (message.read.isNotEmpty)
-              const Icon(
-                Icons.done_all_rounded,
-                color: Colors.deepPurpleAccent,
-                size: 20,
-              ),
-            const SizedBox(width: 2),
-            Text(
-              MyDateUtils.getFormattedTime(context: ctx, time: message.sent),
-              style: const TextStyle(
-                fontSize: 13,
-                color: Colors.black54,
-              ),
-            ),
-          ],
-        ),
-        Flexible(
-          child: Container(
-            padding: EdgeInsets.all(
-              (message.type == MessageType.image)
-                  ? mq.width * .03
-                  : mq.width * .04,
-            ),
-            margin: EdgeInsets.symmetric(
-              horizontal: mq.width * .04,
-              vertical: mq.height * .01,
-            ),
-            decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 218, 255, 176),
-              border: Border.all(color: Colors.lightGreen),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(30),
-                topRight: Radius.circular(30),
-                bottomLeft: Radius.circular(30),
-              ),
-            ),
-            child: (message.type == MessageType.text)
-                ? Text(
-                    message.msg,
-                    style: const TextStyle(fontSize: 15, color: Colors.black87),
-                  )
-                : ClipRRect(
-                    borderRadius: BorderRadius.circular(mq.height * .03),
-                    child: CachedNetworkImage(
-                      fit: BoxFit.cover,
-                      imageUrl: message.msg,
-                      placeholder: (context, url) => const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: CircularProgressIndicator(strokeWidth: 2)),
-                      errorWidget: (context, url, error) => const CircleAvatar(
-                        child: Icon(
-                          Icons.image,
-                          size: 20,
-                        ),
-                      ),
-                    ),
-                  ),
-          ),
-        ),
-      ],
+      child: (message.messageType == MessageType.image)
+          ? ImageMessage(message: message, user: user, isMe: isMe)
+          : (message.messageType == MessageType.file)
+              ? FileMessage(message: message, user: user, isMe: isMe)
+              : (message.messageType == MessageType.custom)
+                  ? CustomMessage(message: message, user: user, isMe: isMe)
+                  : (message.messageType == MessageType.system)
+                      ? SystemMessage(message: message, user: user, isMe: isMe)
+                      : TextMessage(message: message, user: user, isMe: isMe),
     );
   }
 
@@ -179,7 +57,7 @@ class MessageCard extends StatelessWidget {
                     color: Colors.grey, borderRadius: BorderRadius.circular(8)),
               ),
 
-              message.type == MessageType.text
+              message.messageType == MessageType.text
                   ?
                   //copy option
                   _OptionItem(
@@ -188,7 +66,7 @@ class MessageCard extends StatelessWidget {
                       name: 'Copy Text',
                       onTap: () async {
                         await Clipboard.setData(
-                                ClipboardData(text: message.msg))
+                                ClipboardData(text: message.content))
                             .then((value) {
                           //for hiding bottom sheet
                           Navigator.pop(context);
@@ -204,7 +82,7 @@ class MessageCard extends StatelessWidget {
                       name: 'Save Image',
                       onTap: () async {
                         try {
-                          debugPrint('Image Url: ${message.msg}');
+                          debugPrint('Image Url: ${message.content}');
                           // await GallerySaver.saveImage(message.msg,
                           //         albumName: 'We Chat')
                           //     .then((success) {
@@ -229,7 +107,7 @@ class MessageCard extends StatelessWidget {
                 ),
 
               //edit option
-              if (message.type == MessageType.text && isMe)
+              if (message.messageType == MessageType.text && isMe)
                 _OptionItem(
                     icon: const Icon(Icons.edit, color: Colors.blue, size: 26),
                     name: 'Edit Message',
@@ -247,7 +125,7 @@ class MessageCard extends StatelessWidget {
                         color: Colors.red, size: 26),
                     name: 'Delete Message',
                     onTap: () async {
-                      await FirebaseService.deleteMessage(message)
+                      await FirebaseService.deleteMessage(user, message)
                           .then((value) {
                         //for hiding bottom sheet
                         Navigator.pop(context);
@@ -265,15 +143,15 @@ class MessageCard extends StatelessWidget {
               _OptionItem(
                   icon: const Icon(Icons.remove_red_eye, color: Colors.blue),
                   name:
-                      'Sent At: ${MyDateUtils.getMessageTime(context: context, time: message.sent)}',
+                      'Sent At: ${MyDateUtils.getMessageTime(context: context, time: message.createdAt)}',
                   onTap: () {}),
 
               //read time
               _OptionItem(
                   icon: const Icon(Icons.remove_red_eye, color: Colors.green),
-                  name: message.read.isEmpty
+                  name: message.readAt.isEmpty
                       ? 'Read At: Not seen yet'
-                      : 'Read At: ${MyDateUtils.getMessageTime(context: context, time: message.read)}',
+                      : 'Read At: ${MyDateUtils.getMessageTime(context: context, time: message.readAt)}',
                   onTap: () {}),
             ],
           );
@@ -282,7 +160,7 @@ class MessageCard extends StatelessWidget {
 
   //dialog for updating message content
   void _showMessageUpdateDialog(BuildContext context) {
-    String updatedMsg = message.msg;
+    String updatedMsg = message.content;
 
     showDialog(
         context: context,
@@ -333,7 +211,7 @@ class MessageCard extends StatelessWidget {
                     onPressed: () {
                       //hide alert dialog
                       Navigator.pop(context);
-                      FirebaseService.updateMessage(message, updatedMsg);
+                      FirebaseService.updateMessage(user, message, updatedMsg);
                     },
                     child: const Text(
                       'Update',

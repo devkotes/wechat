@@ -1,0 +1,172 @@
+{
+  "messages" : [
+    {
+        "293844-940484-4843943" : {
+            "uid" : "generate uid / ID messages ",
+            "senderId" : "xxxxxx-xxxxxx-xxxxx", 
+            "content" : "testing", 
+            "messageType" : "text", 
+            "groupAt" : "date",
+            "sentAt" : "datetime", 
+            "readAt" : "see datetime receive id", 
+            "updateAt" : "dateTime"
+        },
+        "293844-940484-4843543" : {
+            "uid" : "generate uid / ID messages ",
+            "senderId" : "xxxxxx-xxxxxx-xxxxx", 
+            "content" : "testing https://example.com", 
+            "messageType" : "text link preview", 
+            "groupAt" : "date",
+            "sentAt" : "datetime", 
+            "readAt" : "see datetime receive id", 
+            "updateAt" : "dateTime",
+            "metadata" : {
+                "title" : "example - title", 
+                "description" : "generate description", 
+                "imageUrl" : "https://image.example.com"
+            }
+        },
+        "293844-940484-4843944" : {
+            "uid" : "generate uid / ID messages ",
+            "senderId" : "xxxxxx-xxxxxx-xxxxx", 
+            "content" : "https://example.com",
+            "caption" : "",
+            "messageType" : "image", 
+            "groupAt" : "date",
+            "sentAt" : "datetime", 
+            "readAt" : "see datetime receive id", 
+            "updateAt" : "dateTime"
+        },
+         "293844-940484-4843945" : {
+            "uid" : "generate uid / ID messages ",
+            "senderId" : "xxxxxx-xxxxxx-xxxxx", 
+            "content" : "https://example.com",
+            "caption" : "",
+            "fileName" : "dadang.pdf",
+            "mimeType" : "application/pdf",
+            "size" : "3Kb",
+            "messageType" : "file", 
+            "groupAt" : "date",
+            "sentAt" : "datetime", 
+            "readAt" : "see datetime receive id", 
+            "updateAt" : "dateTime"
+        },
+        "293844-940484-4843946" : {
+            "uid" : "generate uid / ID messages ",
+            "senderId" : "xxxxxx-xxxxxx-xxxxx", 
+            "content" : "https://example.com",
+            "messageType" : "custom",
+            "groupAt" : "date",
+            "sentAt" : "datetime", 
+            "readAt" : "see datetime receive id", 
+            "updateAt" : "dateTime", 
+            "metadata" : {
+                "id": "ID Material / Assignment / Quiz / UTS / UAS", 
+                "type" : "material / assignment / quiz / uts / uas",
+                "title" : "Title Material / Assignment / Quiz / UTS / UAS",
+                "description" : "Description"
+            }
+        },
+        "293844-940484-4843947" : {
+            "uid" : "generate uid / ID messages ",
+            "content" : "session 7",
+            "messageType" : "system",
+            "groupAt" : "date",
+            "sentAt" : "datetime", 
+            "metadata" : {
+                "id": "ID session", 
+                "title" : "title session",
+                "type" : "session"
+            }
+        },
+        "293844-940484-48439477" : {
+            "uid" : "generate uid / ID messages ",
+            "content" : "Bobi Permana Sandi created the group 'Mobile Developer'",
+            "messageType" : "system",
+            "groupAt" : "date",
+            "sentAt" : "datetime", 
+            "metadata" : {
+                "title" : "Bobi Permana Sandi created the group 'Mobile Developer'",
+                "type" : "created_group"
+            }
+        },
+        "293844-940484-48439478" : {
+            "uid" : "generate uid / ID messages ",
+            "content" : "Andini leave group",
+            "messageType" : "system",
+            "groupAt" : "date",
+            "sentAt" : "datetime", 
+            "metadata" : {
+                "title" : "Andini leave group",
+                "type" : "leave_group"
+            }
+        },
+        "293844-940484-48439479" : {
+            "uid" : "generate uid / ID messages ",
+            "content" : "Bobi Permana Sandi added 'Andini'",
+            "messageType" : "system",
+            "groupAt" : "date",
+            "sentAt" : "datetime", 
+            "metadata" : {
+                "title" : "Bobi Permana Sandi added 'Andini'",
+                "type" : "add_member"
+            }
+        },
+        "293844-940484-48439480" : {
+            "uid" : "generate uid / ID messages ",
+            "content" : "Bobi Permana Sandi removed 'Andini'",
+            "messageType" : "system",
+            "groupAt" : "date",
+            "sentAt" : "datetime", 
+            "metadata" : {
+                "title" : "Bobi Permana Sandi removed 'Andini'",
+                "type" : "remove_member"
+            }
+        },
+        "293844-940484-48439481" : {
+            "uid" : "generate uid / ID messages ",
+            "content" : "Andini admin now",
+            "messageType" : "system",
+            "groupAt" : "date",
+            "sentAt" : "datetime", 
+            "metadata" : {
+                "title" : "Andini leave the group",
+                "type" : "set_admin"
+            }
+        },
+        "293844-940484-48439483" : {
+            "uid" : "generate uid / ID messages ",
+            "content" : "Andini is no longer an admin",
+            "messageType" : "system",
+            "groupAt" : "date",
+            "sentAt" : "datetime", 
+            "metadata" : {
+                "title" : "Andini is no longer an admin",
+                "type" : "remove_admin"
+            }
+        },
+        "293844-940484-48439484" : {
+            "uid" : "generate uid / ID messages ",
+            "content" : "Video Conference Actived now",
+            "messageType" : "system",
+            "groupAt" : "date",
+            "sentAt" : "datetime", 
+            "metadata" : {
+                "title" : "Video Conference Actived now",
+                "type" : "set_url_meet"
+            }
+        },
+        "293844-940484-48439482" : {
+            "uid" : "generate uid / ID messages ",
+            "content" : "Video Conference Deactived",
+            "messageType" : "system",
+            "groupAt" : "date",
+            "sentAt" : "datetime", 
+            "metadata" : {
+                "title" : "Video Conference Deactived",
+                "type" : "remove_url_meet"
+            }
+        }
+    }
+  ]
+}

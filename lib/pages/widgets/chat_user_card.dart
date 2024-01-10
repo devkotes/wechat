@@ -79,7 +79,7 @@ class _ChatUserCardState extends State<ChatUserCard> {
             // ),
 
             subtitle: (_msg != null)
-                ? (_msg!.type == MessageType.image)
+                ? (_msg!.messageType == MessageType.image)
                     ? Row(
                         children: [
                           SizedBox(
@@ -89,7 +89,7 @@ class _ChatUserCardState extends State<ChatUserCard> {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(5),
                                 image: DecorationImage(
-                                  image: NetworkImage(_msg!.msg),
+                                  image: NetworkImage(_msg!.content),
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -102,19 +102,20 @@ class _ChatUserCardState extends State<ChatUserCard> {
                         ],
                       )
                     : Text(
-                        _msg!.msg,
+                        _msg!.content,
                         maxLines: 1,
                         style: const TextStyle(color: Colors.black54),
                       )
-                : Text(
-                    widget.user.about,
+                : const Text(
+                    '',
                     maxLines: 1,
-                    style: const TextStyle(color: Colors.black54),
+                    style: TextStyle(color: Colors.black54),
                   ),
 
             trailing: _msg == null
                 ? null
-                : _msg!.read.isEmpty && _msg!.fromId != FirebaseService.user.uid
+                : _msg!.readAt.isEmpty &&
+                        _msg!.senderId != FirebaseService.user.uid
                     ? Container(
                         width: 10,
                         height: 10,
@@ -126,7 +127,7 @@ class _ChatUserCardState extends State<ChatUserCard> {
                     : Text(
                         MyDateUtils.getLastMessageTime(
                           context: context,
-                          time: _msg!.sent,
+                          time: _msg!.createdAt,
                         ),
                         style: const TextStyle(color: Colors.black54),
                       ),

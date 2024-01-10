@@ -1,0 +1,24 @@
+{
+  "rooms" : [
+    {
+        "uid" : {
+            "uid" : "generate uid ", 
+            "id" : "ID Group", 
+            "name" : "name group", 
+            "photoUrl" : "https://example@gmail.com",
+            "adminRoom" : ["uid1", "uid2"],
+            "activityRoom" : ["uid1", "uid2"],
+            "isGroup" : true,
+            "messages" : "List Of Message Object"
+        }
+    },
+    {
+        "uid" : {
+            "uid" : "generate uid",
+            "activityRoom" : ["uid1", "uid2"],
+            "isGroup" : false,
+            "messages" : "List Of Message Object"
+        }
+    }
+  ]
+}

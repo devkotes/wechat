@@ -3,23 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>983363030733-q0njb8vm6p13tnv52u8epda8lmfnob8f.apps.googleusercontent.com</string>
+	<string>641007221923-nlm7qnad2t70g3tm9jmp0jjiem4cpkf8.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.983363030733-q0njb8vm6p13tnv52u8epda8lmfnob8f</string>
-	<key>ANDROID_CLIENT_ID</key>
-	<string>983363030733-o3fuhopkgs3batjbqm2lgd1vspugu6kj.apps.googleusercontent.com</string>
+	<string>com.googleusercontent.apps.641007221923-nlm7qnad2t70g3tm9jmp0jjiem4cpkf8</string>
 	<key>API_KEY</key>
-	<string>AIzaSyBHbavdHMDscPRsNvtGY-H7eEEZAfuNraw</string>
+	<string>AIzaSyBG-C0gvsOscKS8egOscVrKRQWRDJE9QxA</string>
 	<key>GCM_SENDER_ID</key>
-	<string>983363030733</string>
+	<string>641007221923</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.devkotes.wechat</string>
 	<key>PROJECT_ID</key>
-	<string>wechat-1e036</string>
+	<string>wechat-kedi</string>
 	<key>STORAGE_BUCKET</key>
-	<string>wechat-1e036.appspot.com</string>
+	<string>wechat-kedi.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -31,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:983363030733:ios:9a103f455389980a13a384</string>
+	<string>1:641007221923:ios:8aa09d4193bd2e7b3b5316</string>
 </dict>
 </plist>

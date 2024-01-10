@@ -20,10 +20,10 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_notification_channel: ^2.0.0
-  # gallery_saver: ^2.3.2
   google_sign_in: ^6.2.1
   http: ^1.1.2
   image_picker: ^1.0.5
+  mime: ^1.0.4
 
 dev_dependencies:
   flutter_launcher_icons: ^0.13.1

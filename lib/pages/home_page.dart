@@ -1,8 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:wechat/main.dart';
 import 'package:wechat/models/chat_user.dart';
 import 'package:wechat/pages/profile_page.dart';
@@ -57,7 +55,11 @@ class _HomePageState extends State<HomePage> {
       child: Scaffold(
         appBar: AppBar(
           title: (!isSearch)
-              ? const Text('We Chat')
+              ? Image.asset(
+                  'assets/images/kedi1.png',
+                  width: 150,
+                  fit: BoxFit.cover,
+                )
               : TextField(
                   decoration: const InputDecoration(
                       border: InputBorder.none, hintText: 'Name, Email, ...'),
@@ -77,10 +79,7 @@ class _HomePageState extends State<HomePage> {
                     }
                   },
                 ),
-          centerTitle: true,
-          leading: const Icon(
-            Icons.home,
-          ),
+          // centerTitle: true,
           actions: [
             IconButton(
                 onPressed: () {
@@ -138,16 +137,6 @@ class _HomePageState extends State<HomePage> {
                 }
             }
           },
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            await FirebaseAuth.instance.signOut();
-            await GoogleSignIn().signOut();
-          },
-          child: const Icon(
-            Icons.add_comment_rounded,
-            // color: Colors.white,
-          ),
         ),
       ),
     );
