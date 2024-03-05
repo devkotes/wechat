@@ -57,36 +57,40 @@ class _LoginPageState extends State<LoginPage> {
             left: mq.width * .05,
             width: mq.width * .9,
             height: mq.height * .07,
-            child: ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 223, 255, 187),
-                shape: const StadiumBorder(),
-                elevation: 1,
-              ),
-              onPressed: () {
-                handleLogin();
-              },
-              icon: Image.asset(
-                'assets/images/google.png',
-                height: mq.height * .03,
-              ),
-              label: RichText(
-                text: const TextSpan(
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16,
+            child: Column(
+              children: [
+                ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 223, 255, 187),
+                    shape: const StadiumBorder(),
+                    elevation: 1,
                   ),
-                  children: [
-                    TextSpan(text: 'Sign in with '),
-                    TextSpan(
-                      text: 'Google',
+                  onPressed: () {
+                    handleLogin();
+                  },
+                  icon: Image.asset(
+                    'assets/images/google.png',
+                    height: mq.height * .03,
+                  ),
+                  label: RichText(
+                    text: const TextSpan(
                       style: TextStyle(
-                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
+                        fontSize: 16,
                       ),
-                    )
-                  ],
+                      children: [
+                        TextSpan(text: 'Sign in with '),
+                        TextSpan(
+                          text: 'Google',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
           )
         ],

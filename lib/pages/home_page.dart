@@ -101,6 +101,7 @@ class _HomePageState extends State<HomePage> {
         ),
         body: StreamBuilder(
           stream: FirebaseService.getAllUser(),
+          // stream: FirebaseService.getAllRoomsConversation(),
           builder: (context, snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.waiting:
@@ -112,6 +113,9 @@ class _HomePageState extends State<HomePage> {
                 );
               case ConnectionState.active:
               case ConnectionState.done:
+                // debugPrint(
+                //     'GET ALL CONVERSATION : ${snapshot.data?.docs.first.data()}');
+                // return Container();
                 final data = snapshot.data?.docs;
                 listUser =
                     data?.map((e) => ChatUser.fromJson(e.data())).toList() ??

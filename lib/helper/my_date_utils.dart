@@ -23,7 +23,7 @@ class MyDateUtils {
     }
 
     return now.year == sent.year
-        ? '$formattedTime - ${sent.day} ${_getMonth(sent)}'
+        ? '${sent.day} ${_getMonth(sent)} - $formattedTime'
         : '$formattedTime - ${sent.day} ${_getMonth(sent)} ${sent.year}';
   }
 

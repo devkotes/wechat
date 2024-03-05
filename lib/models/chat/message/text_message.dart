@@ -1,35 +1,40 @@
-import 'package:wechat/models/chat/chat_message.dart';
-import 'package:wechat/models/messages.dart';
+import '../chat_message.dart';
+import '../../../helper/enum.dart';
 
 class TextMessage extends ChatMessage {
   final String content;
-  final MessageType type;
 
   TextMessage({
     required super.uid,
+    required super.messageType,
     required super.senderId,
+    required super.createdAt,
     required super.groupAt,
-    required super.sentAt,
+    required super.readAt,
+    required super.updateAt,
     required this.content,
-    required this.type,
   });
 
   factory TextMessage.fromJson(Map<String, dynamic> json) => TextMessage(
         uid: json["uid"],
+        messageType: MessageType.text,
         senderId: json["senderId"],
+        createdAt: json["createdAt"],
         groupAt: json["groupAt"],
-        sentAt: json["sentAt"],
+        readAt: json["readAt"],
+        updateAt: json["updateAt"],
         content: json["content"],
-        type: MessageType.text,
       );
 
   @override
   Map<String, dynamic> toJson() => {
         "uid": uid,
+        "messageType": messageType.name,
         "senderId": senderId,
+        "createdAt": createdAt,
         "groupAt": groupAt,
-        "sentAt": sentAt,
+        "readAt": readAt,
+        "updateAt": updateAt,
         "content": content,
-        "type": type.name
       };
 }

@@ -3,38 +3,47 @@ import 'package:flutter/services.dart';
 import 'package:wechat/helper/my_date_utils.dart';
 import 'package:wechat/main.dart';
 import 'package:wechat/models/chat_user.dart';
-import 'package:wechat/models/messages.dart';
-import 'package:wechat/pages/widgets/message/custom_message.dart';
-import 'package:wechat/pages/widgets/message/file_message.dart';
-import 'package:wechat/pages/widgets/message/image_message.dart';
-import 'package:wechat/pages/widgets/message/system_message.dart';
-import 'package:wechat/pages/widgets/message/text_message.dart';
+import 'package:wechat/pages/widgets/message/custom_message_widget.dart';
+import 'package:wechat/pages/widgets/message/system_message_widget.dart';
+import 'package:wechat/pages/widgets/message/text_message_widget.dart';
 import 'package:wechat/service/firebase_service.dart';
 
 import '../../helper/dialogs.dart';
+import '../../helper/enum.dart';
+import '../../models/chat/chat.dart';
+import 'message/image_message_widget.dart';
 
 class MessageCard extends StatelessWidget {
   final ChatUser user;
-  final Message message;
-  const MessageCard({super.key, required this.message, required this.user});
+  final ChatMessage message;
+  const MessageCard({
+    super.key,
+    required this.message,
+    required this.user,
+  });
 
   @override
   Widget build(BuildContext context) {
     bool isMe = FirebaseService.user.uid == message.senderId;
-    return InkWell(
-      onLongPress: () {
-        _showBottomSheet(context: context, isMe: isMe);
-      },
-      child: (message.messageType == MessageType.image)
-          ? ImageMessage(message: message, user: user, isMe: isMe)
-          : (message.messageType == MessageType.file)
-              ? FileMessage(message: message, user: user, isMe: isMe)
-              : (message.messageType == MessageType.custom)
-                  ? CustomMessage(message: message, user: user, isMe: isMe)
-                  : (message.messageType == MessageType.system)
-                      ? SystemMessage(message: message, user: user, isMe: isMe)
-                      : TextMessage(message: message, user: user, isMe: isMe),
-    );
+    return (message.messageType == MessageType.image)
+        ? ImageMessageWidget(
+            message: (message as ImageMessage), user: user, isMe: isMe)
+        : (message.messageType == MessageType.system)
+            ? SystemMessageWidget(
+                message: (message as SystemMessage), user: user, isMe: isMe)
+            : (message.messageType == MessageType.custom)
+                ? CustomMessageWidget(
+                    message: (message as CustomMessage), user: user, isMe: isMe)
+                : InkWell(
+                    onLongPress: () {
+                      _showBottomSheet(context: context, isMe: isMe);
+                    },
+                    child: TextMessageWidget(
+                      message: (message as TextMessage),
+                      user: user,
+                      isMe: isMe,
+                    ),
+                  );
   }
 
   // bottom sheet for modifying message details
@@ -57,7 +66,8 @@ class MessageCard extends StatelessWidget {
                     color: Colors.grey, borderRadius: BorderRadius.circular(8)),
               ),
 
-              message.messageType == MessageType.text
+              (message.messageType == MessageType.text &&
+                      message is TextMessage)
                   ?
                   //copy option
                   _OptionItem(
@@ -65,8 +75,8 @@ class MessageCard extends StatelessWidget {
                           color: Colors.blue, size: 26),
                       name: 'Copy Text',
                       onTap: () async {
-                        await Clipboard.setData(
-                                ClipboardData(text: message.content))
+                        await Clipboard.setData(ClipboardData(
+                                text: (message as TextMessage).content))
                             .then((value) {
                           //for hiding bottom sheet
                           Navigator.pop(context);
@@ -82,7 +92,8 @@ class MessageCard extends StatelessWidget {
                       name: 'Save Image',
                       onTap: () async {
                         try {
-                          debugPrint('Image Url: ${message.content}');
+                          debugPrint(
+                              'Image Url: ${(message as ImageMessage).content}');
                           // await GallerySaver.saveImage(message.msg,
                           //         albumName: 'We Chat')
                           //     .then((success) {
@@ -149,7 +160,7 @@ class MessageCard extends StatelessWidget {
               //read time
               _OptionItem(
                   icon: const Icon(Icons.remove_red_eye, color: Colors.green),
-                  name: message.readAt.isEmpty
+                  name: (message.readAt.isEmpty)
                       ? 'Read At: Not seen yet'
                       : 'Read At: ${MyDateUtils.getMessageTime(context: context, time: message.readAt)}',
                   onTap: () {}),
@@ -160,7 +171,7 @@ class MessageCard extends StatelessWidget {
 
   //dialog for updating message content
   void _showMessageUpdateDialog(BuildContext context) {
-    String updatedMsg = message.content;
+    String updatedMsg = (message as TextMessage).content;
 
     showDialog(
         context: context,

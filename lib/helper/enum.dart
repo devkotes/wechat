@@ -13,3 +13,14 @@ enum CustomMessageType {
   uts,
   uas;
 }
+
+enum SystemMessageType {
+  addMember,
+  removeMember,
+  createGroup,
+  leaveGroup,
+  deleteGroup,
+  addZoom,
+  removeZoom,
+  session,
+}

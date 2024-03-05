@@ -3,11 +3,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:wechat/helper/my_date_utils.dart';
 import 'package:wechat/main.dart';
+import 'package:wechat/models/chat/chat.dart';
 import 'package:wechat/models/chat_user.dart';
-import 'package:wechat/models/messages.dart';
 import 'package:wechat/pages/chat_page.dart';
 import 'package:wechat/service/firebase_service.dart';
 
+import '../../helper/enum.dart';
 import 'profile_dialog.dart';
 
 class ChatUserCard extends StatefulWidget {
@@ -19,7 +20,7 @@ class ChatUserCard extends StatefulWidget {
 }
 
 class _ChatUserCardState extends State<ChatUserCard> {
-  Message? _msg;
+  ChatMessage? _msg;
 
   @override
   Widget build(BuildContext context) {
@@ -33,11 +34,31 @@ class _ChatUserCardState extends State<ChatUserCard> {
         stream: FirebaseService.getLastMessage(widget.user),
         builder: (context, snapshot) {
           final data = snapshot.data?.docs;
-          final list =
-              data?.map((e) => Message.fromJson(e.data())).toList() ?? [];
+          List<ChatMessage> list = [];
+          // final list =
+          //     data?.map((e) => ChatMessage.fromJson(e.data())).toList() ?? [];
+          // if (list.isNotEmpty) {
+          //   _msg = list.first;
+          // }
+
+          data?.forEach((element) {
+            if (element.data()['messageType'] == MessageType.image.name) {
+              list.add(ImageMessage.fromJson(element.data()));
+              // list.sort(
+              //   (a, b) => b.createdAt.compareTo(a.createdAt),
+              // );
+            } else {
+              list.add(TextMessage.fromJson(element.data()));
+              // list.sort(
+              //   (a, b) => b.createdAt.compareTo(a.createdAt),
+              // );
+            }
+          });
+
           if (list.isNotEmpty) {
             _msg = list.first;
           }
+
           return ListTile(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15.0),
@@ -55,31 +76,44 @@ class _ChatUserCardState extends State<ChatUserCard> {
                     context: context,
                     builder: (_) => ProfileDialog(user: widget.user));
               },
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(mq.height * .3),
-                child: CachedNetworkImage(
-                  fit: BoxFit.cover,
-                  imageUrl: widget.user.photoUrl,
-                  width: 60.0,
-                  height: 60.0,
-                  progressIndicatorBuilder: (context, url, downloadProgress) =>
-                      CircularProgressIndicator(
-                          value: downloadProgress.progress),
-                  errorWidget: (context, url, error) => const CircleAvatar(
-                    child: Icon(CupertinoIcons.person),
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(mq.height * .3),
+                    child: CachedNetworkImage(
+                      fit: BoxFit.cover,
+                      imageUrl: widget.user.photoUrl,
+                      width: 60.0,
+                      height: 60.0,
+                      progressIndicatorBuilder:
+                          (context, url, downloadProgress) =>
+                              CircularProgressIndicator(
+                                  value: downloadProgress.progress),
+                      errorWidget: (context, url, error) => const CircleAvatar(
+                        child: Icon(CupertinoIcons.person),
+                      ),
+                    ),
                   ),
-                ),
+                  if (widget.user.isOnline)
+                    Positioned(
+                      bottom: 5,
+                      right: 5,
+                      child: Container(
+                        width: 10,
+                        height: 10,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.green,
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
             title: Text(widget.user.name),
-            // subtitle:  Text(
-            //   (_msg != null) ? _msg!.msg : widget.user.about,
-            //   maxLines: 1,
-            //   style: const TextStyle(color: Colors.black54),
-            // ),
-
             subtitle: (_msg != null)
-                ? (_msg!.messageType == MessageType.image)
+                ? (_msg!.messageType == MessageType.image &&
+                        _msg is ImageMessage)
                     ? Row(
                         children: [
                           SizedBox(
@@ -89,7 +123,8 @@ class _ChatUserCardState extends State<ChatUserCard> {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(5),
                                 image: DecorationImage(
-                                  image: NetworkImage(_msg!.content),
+                                  image: NetworkImage(
+                                      (_msg as ImageMessage).content),
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -102,7 +137,7 @@ class _ChatUserCardState extends State<ChatUserCard> {
                         ],
                       )
                     : Text(
-                        _msg!.content,
+                        (_msg as TextMessage).content,
                         maxLines: 1,
                         style: const TextStyle(color: Colors.black54),
                       )
@@ -111,7 +146,6 @@ class _ChatUserCardState extends State<ChatUserCard> {
                     maxLines: 1,
                     style: TextStyle(color: Colors.black54),
                   ),
-
             trailing: _msg == null
                 ? null
                 : _msg!.readAt.isEmpty &&

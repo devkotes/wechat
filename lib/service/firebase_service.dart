@@ -7,9 +7,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
+import 'package:wechat/models/chat/chat.dart';
 import 'package:wechat/models/chat_user.dart';
-import 'package:wechat/models/messages.dart';
-import 'package:mime/mime.dart';
+// import 'package:mime/mime.dart';
+
+import '../helper/enum.dart';
 
 class FirebaseService {
   // untuk authentication firebase
@@ -35,6 +38,8 @@ class FirebaseService {
   // key Messaging API
   static String get messageKey =>
       'AAAA5PUBDs0:APA91bHhPwESUkz9JvTgJfuxZdApkytfZ1E5mpOxjYtIsUNAmrgBqVy5_1M6vr7eCsF02_EZq6zkC4GtvHUnaXQL3PYhDMpJVLShyDpnHzqsD6WqdM4jiGzsQHkFfz2LE4iUdhzpvKEF';
+
+  static String get time => DateTime.now().millisecondsSinceEpoch.toString();
 
   // token firebase messaging
   static Future<void> getFirebaseMessagingToken() async {
@@ -111,8 +116,6 @@ class FirebaseService {
 
   // membuat user
   static Future<void> createUser() async {
-    final time = DateTime.now().millisecondsSinceEpoch.toString();
-
     final chatUser = ChatUser(
       isOnline: false,
       id: user.uid,
@@ -184,6 +187,10 @@ class FirebaseService {
       ? '${user.uid}_$id'
       : '${id}_${user.uid}';
 
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllRoomsConversation() {
+    return firestore.collection('rooms').snapshots();
+  }
+
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessage(
       ChatUser user) {
     return firestore
@@ -194,23 +201,11 @@ class FirebaseService {
 
   // Mengirim Pesan
   static Future<void> sendMessage(
-      ChatUser chatUser, String content, MessageType type) async {
+      ChatUser chatUser, ChatMessage chatMessage) async {
     try {
-      final time = DateTime.now().millisecondsSinceEpoch.toString();
-
-      final Message message = Message(
-        uid: 'xxxx-xxxyyy-xxxxttt',
-        messageType: type,
-        content: content,
-        readAt: '',
-        senderId: user.uid,
-        createdAt: time,
-        groupAt: time,
-      );
-
       final ref = firestore
           .collection('rooms/${getConversationId(chatUser.id)}/messages/');
-      await ref.doc(time).set(message.toJson()).then((value) {
+      await ref.doc(time).set(chatMessage.toJson()).then((value) {
         debugPrint('SEND notification');
         // sendNotification(chatUser, type == MessageType.text ? content : 'image');
       });
@@ -221,7 +216,7 @@ class FirebaseService {
 
   // UPDATE Read Status
   static Future<void> updateMessageReadStatus(
-      ChatUser chatUser, Message message) async {
+      ChatUser chatUser, ChatMessage message) async {
     final time = DateTime.now().millisecondsSinceEpoch.toString();
     firestore
         .collection('rooms/${getConversationId(chatUser.id)}/messages/')
@@ -238,6 +233,27 @@ class FirebaseService {
         .snapshots();
   }
 
+  static Future<void> sendChatText(ChatUser chatUser, String content) async {
+    try {
+      debugPrint('KIRIM TEXT');
+      final textMessage = TextMessage(
+        uid: const Uuid().v4(),
+        messageType: MessageType.text,
+        content: content,
+        senderId: user.uid,
+        createdAt: time,
+        groupAt: time,
+        readAt: '',
+        updateAt: '',
+      );
+
+      // Kirim pesan gambar
+      await sendMessage(chatUser, textMessage);
+    } catch (e) {
+      debugPrint('Error kriim text :$e');
+    }
+  }
+
   static Future<void> sendChatImage(ChatUser chatUser, File file) async {
     final ext = file.path.split('.').last;
     final ref = storage.ref().child(
@@ -251,25 +267,39 @@ class FirebaseService {
     // GET IMAGE URL FROM STORAGE
     final imageUrl = await ref.getDownloadURL();
 
+    final imageMessage = ImageMessage(
+      uid: const Uuid().v4(),
+      messageType: MessageType.image,
+      content: imageUrl,
+      senderId: user.uid,
+      createdAt: time,
+      groupAt: time,
+      caption: '',
+      readAt: '',
+      updateAt: '',
+    );
+
     // Kirim pesan gambar
-    await sendMessage(chatUser, imageUrl, MessageType.image);
+    await sendMessage(chatUser, imageMessage);
   }
 
   // Delete Message
-  static Future<void> deleteMessage(ChatUser chatUser, Message message) async {
+  static Future<void> deleteMessage(
+      ChatUser chatUser, ChatMessage chatMessage) async {
     await firestore
         .collection('rooms/${getConversationId(chatUser.id)}/messages/')
-        .doc(message.createdAt)
+        .doc(chatMessage.createdAt)
         .delete();
 
-    if (message.messageType == MessageType.image) {
-      await storage.refFromURL(message.content).delete();
+    if (chatMessage.messageType == MessageType.image &&
+        chatMessage is ImageMessage) {
+      await storage.refFromURL(chatMessage.content).delete();
     }
   }
 
   //update message
   static Future<void> updateMessage(
-      ChatUser chatUser, Message message, String updatedcontent) async {
+      ChatUser chatUser, ChatMessage message, String updatedcontent) async {
     final time = DateTime.now().millisecondsSinceEpoch.toString();
     await firestore
         .collection('rooms/${getConversationId(chatUser.id)}/messages/')
@@ -277,21 +307,21 @@ class FirebaseService {
         .update({'content': updatedcontent, 'updateAt': time});
   }
 
-  static Future<void> sendChatFile(ChatUser chatUser, File file) async {
-    final ext = file.path.split('.').last;
-    final mimeType = lookupMimeType(file.path);
-    debugPrint('EXT : $ext');
-    debugPrint('mimeType : $mimeType');
-    // final ref = storage.ref().child(
-    //     'files/${getConversationId(chatUser.id)}/${DateTime.now().millisecondsSinceEpoch}.$ext');
-    // await ref.putFile(file, SettableMetadata(contentType: mimeType)).then((p0) {
-    //   debugPrint('Data Transferred ${p0.bytesTransferred / 100} kb');
-    // });
+  // static Future<void> sendChatFile(ChatUser chatUser, File file) async {
+  //   final ext = file.path.split('.').last;
+  //   final mimeType = lookupMimeType(file.path);
+  //   debugPrint('EXT : $ext');
+  //   debugPrint('mimeType : $mimeType');
+  //   // final ref = storage.ref().child(
+  //   //     'files/${getConversationId(chatUser.id)}/${DateTime.now().millisecondsSinceEpoch}.$ext');
+  //   // await ref.putFile(file, SettableMetadata(contentType: mimeType)).then((p0) {
+  //   //   debugPrint('Data Transferred ${p0.bytesTransferred / 100} kb');
+  //   // });
 
-    // // GET IMAGE URL FROM STORAGE
-    // final getUrl = await ref.getDownloadURL();
+  //   // // GET IMAGE URL FROM STORAGE
+  //   // final getUrl = await ref.getDownloadURL();
 
-    // // Kirim pesan gambar
-    // await sendMessage(chatUser, getUrl, MessageType.image);
-  }
+  //   // // Kirim pesan gambar
+  //   // await sendMessage(chatUser, getUrl, MessageType.image);
+  // }
 }

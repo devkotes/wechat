@@ -24,6 +24,7 @@ dependencies:
   http: ^1.1.2
   image_picker: ^1.0.5
   mime: ^1.0.4
+  uuid: ^4.3.2
 
 dev_dependencies:
   flutter_launcher_icons: ^0.13.1

@@ -1,28 +1,31 @@
-import 'package:wechat/models/chat/chat_message.dart';
-import 'package:wechat/models/messages.dart';
+import '../../../helper/enum.dart';
+import '../chat_message.dart';
 
 class ImageMessage extends ChatMessage {
   final String content;
-  final MessageType type;
-  final String caption;
+  final String? caption;
 
   ImageMessage({
     required super.uid,
+    required super.messageType,
     required super.senderId,
+    required super.createdAt,
     required super.groupAt,
-    required super.sentAt,
+    required super.readAt,
+    required super.updateAt,
     required this.content,
-    required this.type,
-    required this.caption,
+    this.caption,
   });
 
   factory ImageMessage.fromJson(Map<String, dynamic> json) => ImageMessage(
         uid: json["uid"],
+        messageType: MessageType.image,
         senderId: json["senderId"],
+        createdAt: json["createdAt"],
         groupAt: json["groupAt"],
-        sentAt: json["sentAt"],
+        readAt: json["readAt"],
+        updateAt: json["updateAt"],
         content: json["content"],
-        type: MessageType.image,
         caption: json["caption"],
       );
 
@@ -30,12 +33,14 @@ class ImageMessage extends ChatMessage {
   Map<String, dynamic> toJson() {
     return {
       "uid": uid,
+      "messageType": messageType.name,
       "senderId": senderId,
+      "createdAt": createdAt,
       "groupAt": groupAt,
-      "sentAt": sentAt,
+      "readAt": readAt,
+      "updateAt": updateAt,
       "content": content,
-      "type": type.name,
-      "caption": caption
+      "caption": caption ?? '',
     };
   }
 }

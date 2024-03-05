@@ -5,10 +5,11 @@ import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:wechat/helper/enum.dart';
 import 'package:wechat/helper/my_date_utils.dart';
 import 'package:wechat/main.dart';
+import 'package:wechat/models/chat/chat.dart';
 import 'package:wechat/models/chat_user.dart';
-import 'package:wechat/models/messages.dart';
 import 'package:wechat/pages/view_profile_page.dart';
 import 'package:wechat/pages/widgets/message_card.dart';
 
@@ -23,7 +24,7 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  List<Message> listMessage = [];
+  List<ChatMessage> listMessage = [];
 
   late TextEditingController textController;
 
@@ -55,7 +56,7 @@ class _ChatPageState extends State<ChatPage> {
             automaticallyImplyLeading: false,
             flexibleSpace: _appBar(),
           ),
-          backgroundColor: const Color.fromARGB(255, 236, 229, 255),
+          backgroundColor: Colors.white,
           body: Column(
             children: [
               Expanded(
@@ -73,10 +74,33 @@ class _ChatPageState extends State<ChatPage> {
                       case ConnectionState.active:
                       case ConnectionState.done:
                         final data = snapshot.data?.docs;
-                        listMessage = data
-                                ?.map((e) => Message.fromJson(e.data()))
-                                .toList() ??
-                            [];
+                        List<ChatMessage> tempMessage = [];
+
+                        data?.forEach((element) {
+                          if (element.data()['messageType'] ==
+                              MessageType.image.name) {
+                            tempMessage
+                                .add(ImageMessage.fromJson(element.data()));
+                          } else if (element.data()['messageType'] ==
+                              MessageType.system.name) {
+                            tempMessage
+                                .add(SystemMessage.fromJson(element.data()));
+                          } else if (element.data()['messageType'] ==
+                              MessageType.custom.name) {
+                            tempMessage
+                                .add(CustomMessage.fromJson(element.data()));
+                          } else {
+                            tempMessage
+                                .add(TextMessage.fromJson(element.data()));
+                          }
+                        });
+
+                        listMessage = tempMessage;
+
+                        // listMessage = data
+                        //         ?.map((e) => Message.fromJson(e.data()))
+                        //         .toList() ??
+                        //     [];
 
                         if (listMessage.isNotEmpty) {
                           return ListView.builder(
@@ -303,11 +327,7 @@ class _ChatPageState extends State<ChatPage> {
           MaterialButton(
             onPressed: () {
               if (textController.text.isNotEmpty) {
-                FirebaseService.sendMessage(
-                  widget.user,
-                  textController.text,
-                  MessageType.text,
-                );
+                FirebaseService.sendChatText(widget.user, textController.text);
                 textController.clear();
               }
             },

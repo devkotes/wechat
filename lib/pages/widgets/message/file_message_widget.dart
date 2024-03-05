@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:wechat/models/chat/chat.dart';
 import 'package:wechat/models/chat_user.dart';
 
+import '../../../helper/enum.dart';
 import '../../../helper/my_date_utils.dart';
 import '../../../main.dart';
-import '../../../models/messages.dart';
 import '../../../service/firebase_service.dart';
 
-class SystemMessage extends StatelessWidget {
-  final Message message;
+class FileMessageWidget extends StatelessWidget {
+  final ChatMessage message;
   final ChatUser user;
   final bool isMe;
-  const SystemMessage({
+  const FileMessageWidget({
     super.key,
     required this.message,
     required this.isMe,
@@ -26,7 +27,7 @@ class SystemMessage extends StatelessWidget {
 }
 
 class _PurpleMessage extends StatelessWidget {
-  final Message message;
+  final ChatMessage message;
   final bool isMe;
   const _PurpleMessage({
     required this.message,
@@ -60,11 +61,7 @@ class _PurpleMessage extends StatelessWidget {
         ),
         Flexible(
           child: Container(
-            padding: EdgeInsets.all(
-              (message.messageType == MessageType.image)
-                  ? mq.width * .03
-                  : mq.width * .04,
-            ),
+            padding: EdgeInsets.all(mq.width * .04),
             margin: EdgeInsets.symmetric(
               horizontal: mq.width * .04,
               vertical: mq.height * .01,
@@ -78,9 +75,9 @@ class _PurpleMessage extends StatelessWidget {
                 bottomLeft: Radius.circular(30),
               ),
             ),
-            child: Text(
-              'MESSAGE SYSTEM : ${message.customMetadata?.title}',
-              style: const TextStyle(fontSize: 15, color: Colors.white),
+            child: const Text(
+              'MESSAGE SYSTEM :',
+              style: TextStyle(fontSize: 15, color: Colors.white),
             ),
           ),
         ),
@@ -90,7 +87,7 @@ class _PurpleMessage extends StatelessWidget {
 }
 
 class _GreyMessage extends StatelessWidget {
-  final Message message;
+  final ChatMessage message;
   final ChatUser user;
   final bool isMe;
   const _GreyMessage({
@@ -128,7 +125,7 @@ class _GreyMessage extends StatelessWidget {
               ),
             ),
             child: Text(
-              'MESSAGE SYSTEM : ${message.caption}',
+              'MESSAGE SYSTEM : ${(message as TextMessage).content}',
               style: const TextStyle(fontSize: 15, color: Colors.black),
             ),
           ),
